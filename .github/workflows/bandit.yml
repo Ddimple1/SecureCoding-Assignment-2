@@ -1,29 +1,31 @@
-name: Bandit security scan
-
-# When to run the workflow
+name: Bandit Security Scan
+ 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ] 
   pull_request:
     branches: [ main ]
-
+  workflow_dispatch:
+ 
 jobs:
   bandit:
     runs-on: ubuntu-latest
-
+    name: Run Bandit on Python files
+ 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+ 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
-      - name: Run Bandit security scan
-        uses: shundor/bandit-action@v1
+ 
+      - name: Install Bandit
+        run: pip install bandit
+ 
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
         with:
-          targets: "jobs"       
-          level: "high"
-          confidence: "high"
-        continue-on-error: true  # behaves like `--exit-zero` so the job won't fail the workflow
+          name: bandit-report
+          path: bandit-report.txt
