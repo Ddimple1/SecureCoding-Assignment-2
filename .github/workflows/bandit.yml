@@ -1,6 +1,29 @@
-uses: shundor/bandit-action@v1
-with: 
-    path: "jobs"
-    level: high
-    confidence: high
-    exit_zero: true
+name: Bandit security scan
+
+# When to run the workflow
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run Bandit security scan
+        uses: shundor/bandit-action@v1
+        with:
+          targets: "jobs"       
+          level: "high"
+          confidence: "high"
+        continue-on-error: true  # behaves like `--exit-zero` so the job won't fail the workflow
